@@ -1,3 +1,5 @@
+#為正常影像加入雜訊
+
 import cv2 as cv
 import numpy as np
 import os
@@ -5,7 +7,7 @@ import os
 
 def add_salt_pepper_noise(image):
     h, w = image.shape[:2]
-    nums = 10000
+    nums = h*w
     rows = np.random.randint(0, h, nums, dtype=np.int)
     cols = np.random.randint(0, w, nums, dtype=np.int)
     for i in range(nums):
@@ -16,11 +18,11 @@ def add_salt_pepper_noise(image):
     return image
 
 
-def gaussian_noise(image):
+def add_gaussian_noise(image):
     noise = np.zeros(image.shape, image.dtype)
-    m = (15, 15, 15)
-    s = (30, 30, 30)
-    cv.randn(noise, m, s)
+    mean = (15, 15, 15)
+    std = (30, 30, 30)
+    cv.randn(noise, mean, std)
     dst = cv.add(image, noise)
     return dst
 
@@ -31,6 +33,6 @@ for f in os.listdir(dir_path):
     h, w = src.shape[:2]
     copy = np.copy(src)
     pepper = add_salt_pepper_noise(copy)
-    guass = gaussian_noise(copy)
+    guass = add_gaussian_noise(copy)
     cv.imwrite(os.path.join(dir_path, filename+'_guass.bmp'), guass)
     cv.imwrite(os.path.join(dir_path, filename+'_pepper.bmp'), pepper)
